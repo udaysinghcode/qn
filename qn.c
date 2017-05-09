@@ -1,6 +1,8 @@
-#include <stdlib.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <termios.h>
+#include <stdio.h>
+#include <ctype.h>
 
 struct termios orig_termios;
 
@@ -22,6 +24,16 @@ int main() {
   startRawMode();
   char c;
   // Read input into char c and quit on reading q
-  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q');
+  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+    // iscntrl tests whether character is a control character to determine
+    // printing.
+    if (iscntrl(c)) {
+      printf("%d\n", c);
+    } else {
+      // %d tells it to format the byte as decimal number and %c tells to write
+      // out byte as character 
+      printf("%d ('%c')\n", c, c);
+    }
+  }
   return 0;
 }
