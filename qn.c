@@ -20,6 +20,8 @@ void startRawMode() {
   raw.c_oflag &= ~(OPOST);
   raw.c_cflag |= (CS8);
   raw.c_lflag &= ~(ECHO | ICANON | ISIG);
+  raw.c_cc[VMIN] = 0;
+  raw.c_cc[VTIME] = 1;
   // apply to terminal
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw); 
 }
