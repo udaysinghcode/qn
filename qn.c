@@ -6,6 +6,12 @@
 
 struct termios orig_termios;
 
+// Print error function using and use perror to print descriptive error message
+void die(const char *s) {
+  perror(s);
+  exit(1);
+}
+
 void stopRawMode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 }
@@ -20,6 +26,9 @@ void startRawMode() {
   raw.c_oflag &= ~(OPOST);
   raw.c_cflag |= (CS8);
   raw.c_lflag &= ~(ECHO | ICANON | ISIG);
+  // Set minimum and maximum for control characters including minimum number of
+  // bytes that are read and the maximum amount of time to wait before a read()
+  // returns.
   raw.c_cc[VMIN] = 0;
   raw.c_cc[VTIME] = 1;
   // apply to terminal
