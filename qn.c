@@ -17,6 +17,7 @@ void startRawMode() {
   struct termios raw = orig_termios;
   // modify local flags by flipping fourth bit to not print typing / quit at q
   raw.c_iflag &= ~(ICRNL | IXON);
+  raw.c_oflag &= ~(OPOST);
   raw.c_lflag &= ~(ECHO | ICANON | ISIG);
   // apply to terminal
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw); 
