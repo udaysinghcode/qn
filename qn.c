@@ -31,11 +31,11 @@ int main() {
     // iscntrl tests whether character is a control character to determine
     // printing.
     if (iscntrl(c)) {
-      printf("%d\n", c);
+      printf("%d\r\n", c);
     } else {
       // %d tells it to format the byte as decimal number and %c tells to write
       // out byte as character 
-      printf("%d ('%c')\n", c, c);
+      printf("%d ('%c')\r\n", c, c);
     }
   }
   return 0;
