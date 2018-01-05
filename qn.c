@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include <errno.h>
 
+#define CTRL_KEY(k) ((k) & 0x1f)
+
 struct termios orig_termios;
 
 // Print error function using and use perror to print descriptive error message
@@ -56,6 +58,7 @@ int main() {
       // out byte as character 
       printf("%d ('%c')\r\n", c, c);
     }
+    if (c == CTRL_KEY('q')) break;
   }
   return 0;
 }
