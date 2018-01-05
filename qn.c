@@ -10,7 +10,7 @@
 struct termios orig_termios;
 
 // Print error function using and use perror to print descriptive error message
-// take parameter to list alongside error so people know 
+// take parameter to list alongside error so people know
 void die(const char *s) {
   perror(s);
   exit(1);
@@ -39,26 +39,58 @@ void startRawMode() {
   raw.c_cc[VTIME] = 1;
   // apply to terminal
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
-    die("tcsetattr"); 
+    die("tcsetattr");
+}
+
+// This should wait for one keypress and return the keypress upon it being
+// handled. We'll later grow it to cover escape sequences, which involve reading
+// more than one byte like arrow keys.
+
+char editorReadKey() {
+  int nread;
+  char c;
+  while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+    if (nread == -1 && errno != EAGAIN) die ("read");
+  }
+  return c;
+}
+
+/*** input **/
+
+// Create function for waiting for keypress and handling it. Later we can
+// map various Ctrl key combinations and other special keys to different editor
+// functions.
+void editorProcessKeypress() {
+  char c = editorReadKey();
+
+  switch (c) {
+    case CTRL_KEY('q'):
+      exit (0);
+      break;
+  }
 }
 
 int main() {
   startRawMode();
-  char c;
-  // Read input into char c and quit on reading q
-  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
-    // iscntrl tests whether character is a control character to determine
-    // printing.
-    if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN)
-      die("read");
-    if (iscntrl(c)) {
-      printf("%d\r\n", c);
-    } else {
-      // %d tells it to format the byte as decimal number and %c tells to write
-      // out byte as character 
-      printf("%d ('%c')\r\n", c, c);
-    }
-    if (c == CTRL_KEY('q')) break;
+
+  while(1) {
+    editorProcessKeypress();
   }
+  // char c;
+  // // Read input into char c and quit on reading q
+  // while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+  //   // iscntrl tests whether character is a control character to determine
+  //   // printing.
+  //   if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN)
+  //     die("read");
+  //   if (iscntrl(c)) {
+  //     printf("%d\r\n", c);
+  //   } else {
+  //     // %d tells it to format the byte as decimal number and %c tells to write
+  //     // out byte as character
+  //     printf("%d ('%c')\r\n", c, c);
+  //   }
+  //   if (c == CTRL_KEY('q')) break;
+  // }
   return 0;
 }
