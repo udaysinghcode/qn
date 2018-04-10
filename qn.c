@@ -14,6 +14,9 @@ struct termios orig_termios;
 // Print error function using and use perror to print descriptive error message
 // take parameter to list alongside error so people know
 void die(const char *s) {
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO, "\x1b[H", 3);
+
   perror(s);
   exit(1);
 }
@@ -67,6 +70,8 @@ void editorProcessKeypress() {
 
   switch (c) {
     case CTRL_KEY('q'):
+      write(STDOUT_FILENO, "\x1b[2J", 4);
+      write(STDOUT_FILENO, "\x1bH", 3);
       exit (0);
       break;
   }
