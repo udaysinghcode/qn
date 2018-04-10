@@ -75,8 +75,12 @@ void editorProcessKeypress() {
 /*** output ***/
 
 // 4 implies we write out 4 bytes to the terminal. \x1b is the escape character.
+// Remember we are using VT100 commands. We are going to use the H command to
+// reposition the cursor.
+// Now we can start the text editor at the top left.
 void editorRefreshScreen() {
   write(STDOUT_FILENO, "\x1b[2J", 4);
+  write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 
