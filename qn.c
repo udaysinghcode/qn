@@ -7,8 +7,10 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
+/*** data ***/
 struct termios orig_termios;
 
+/*** raw process ***/
 // Print error function using and use perror to print descriptive error message
 // take parameter to list alongside error so people know
 void die(const char *s) {
@@ -55,7 +57,7 @@ char editorReadKey() {
   return c;
 }
 
-/*** input **/
+/*** input ***/
 
 // Create function for waiting for keypress and handling it. Later we can
 // map various Ctrl key combinations and other special keys to different editor
@@ -70,6 +72,15 @@ void editorProcessKeypress() {
   }
 }
 
+/*** output ***/
+
+// 4 implies we write out 4 bytes to the terminal. \x1b is the escape character.
+void editorRefreshScreen() {
+  write(STDOUT_FILENO, "\x1b[2J", 4);
+}
+
+
+/*** initialize ***/
 int main() {
   startRawMode();
 
